@@ -38,20 +38,14 @@ onMounted(() => {
 });
 onUnmounted(() => {
   body.classList.remove("presentation-page");
-  body.classList.remove("bg-oring");
+  // body.classList.remove("bg-oring");
 });
 </script>
 
+
 <template>
-  <div class="container position-sticky z-index-sticky top-0">
-    <div class="row">
-      <div class="col-12">
-        <NavbarDefault :sticky="true" />
-      </div>
-    </div>
-  </div>
   <Header>
-    <div class="page-header min-vh-50" href="/">
+    <div class="page-header min-vh-25" href="/">
       <div class="container">
         <div class="row">
           <div class="col-lg-4 position-relative">
@@ -71,8 +65,15 @@ onUnmounted(() => {
       </div>
     </div>
   </Header>
+  <div class="container position-sticky z-index-sticky top-0">
+    <div class="row">
+      <div class="col-12">
+        <NavbarDefault :sticky="true" />
+      </div>
+    </div>
+  </div>
 
-  <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6">
+  <div class="card card-body blur shadow-blur mx-3 mx-md-4">
     <PresentationCounter />
     <PresentationInformation />
     <PresentationExample :data="data" />

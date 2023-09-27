@@ -15,9 +15,9 @@ const props = defineProps({
     color: String,
     label: String,
     default: () => ({
-      route: "https://www.creative-tim.com/product/vue-material-kit",
-      color: "bg-gradient-success",
-      label: "Free Download"
+      route: "http://localhost:3000/login",
+      color: "bg-gradient-warning",
+      label: "Login"
     })
   },
   transparent: {
@@ -93,9 +93,9 @@ watch(
   <nav
     class="navbar navbar-expand-lg top-0"
     :class="{
-      'z-index-3 w-100 shadow-none navbar-transparent position-absolute my-3':
+      'z-index-3 w-100 shadow-none navbar-transparent my-3':
         props.transparent,
-      'my-3 blur border-radius-lg z-index-3 py-2 shadow py-2 start-0 end-0 mx-4 position-absolute mt-4':
+      'my-3 blur border-radius-lg z-index-3 py-2 shadow py-2 start-0 end-0 mx-4 mt-4':
         props.sticky,
       'navbar-light bg-white py-3': props.light,
       ' navbar-dark bg-gradient-dark z-index-3 py-3': props.dark
@@ -120,7 +120,7 @@ watch(
         title="Designed and Coded by Creative Tim"
         data-placement="bottom"
       >
-        Material Kit 2
+        안녕
       </RouterLink>
       <RouterLink
         class="navbar-brand d-block d-md-none"

@@ -34,10 +34,10 @@ defineProps({
 });
 </script>
 <template>
-  <footer class="footer pt-5 mt-5">
+  <footer class="footer mt-5">
     <div class="container">
       <div class="row">
-        <div class="col-md-3 mb-4 m-auto">
+        <div class="col-md-3 m-auto">
           <div class="text-center">
             <a :href="brand.route">
               <h6 class="font-weight-bolder mb-4">{{ brand.name }}</h6>
@@ -81,10 +81,7 @@ defineProps({
             <p class="text-dark my-4 text-sm font-weight-normal">
               All rights reserved. Copyright ©
               {{ new Date().getFullYear() }}
-              Material Kit by
-              <a href="https://www.creative-tim.com" target="_blank"
-                >Creative Tim</a
-              >.
+              OringVape2
             </p>
           </div>
         </div>
