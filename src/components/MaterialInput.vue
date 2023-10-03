@@ -86,6 +86,7 @@ function getClasses(size, success, error) {
       :placeholder="placeholder"
       :isRequired="isRequired"
       :disabled="isDisabled"
+      @input="$emit('update:value', $event.target.value)"
     />
   </div>
 </template>

@@ -31,6 +31,7 @@ defineProps({
       value=""
       :id="id"
       :checked="checked"
+      @input="$emit('update:value', $event.target.value)"
     />
     <label class="form-check-label" :class="labelClass" :for="id">
       <slot />

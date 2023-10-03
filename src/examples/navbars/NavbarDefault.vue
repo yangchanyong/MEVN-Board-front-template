@@ -15,7 +15,7 @@ const props = defineProps({
     color: String,
     label: String,
     default: () => ({
-      route: "http://localhost:3000/login",
+      route: "http://localhost:3000/auth/login",
       color: "bg-gradient-warning",
       label: "Login"
     })

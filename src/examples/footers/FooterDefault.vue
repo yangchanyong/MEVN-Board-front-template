@@ -31,6 +31,15 @@ defineProps({
       }
     ]
   },
+  menus: {
+    type: Array,
+    name: String,
+    items: {
+      type: Array,
+      name: String,
+      href: String
+    },
+  }
 });
 </script>
 <template>

@@ -26,16 +26,20 @@ const username = ref("");
 
 const password = ref('');
 
+const nickName = ref('');
+
+const pwChk = ref(true)
+
 const submitForm = () => {
   const user = {
     username: username.value,
     pw: password.value,
+    nickName: nickName.value,
   };
   console.log(user);
-  axios.post('/api/auth/login', user)
+  axios.post('/api/auth/signup', user)
       .then((response => {
-        localStorage.setItem('user', user.username)
-        router.replace('/');
+        router.replace('/auth/signin');
       }))
       .catch((err) => {
         alert(err+'\n'+user)
@@ -62,25 +66,8 @@ const submitForm = () => {
                   <h4
                     class="text-white font-weight-bolder text-center mt-2 mb-0"
                   >
-                    Login
+                    회원가입
                   </h4>
-                  <div class="row mt-3">
-                    <div class="col-2 text-center ms-auto">
-                      <a class="btn btn-link px-3" href="javascript:;">
-                        <i class="fa fa-facebook text-white text-lg"></i>
-                      </a>
-                    </div>
-                    <div class="col-2 text-center px-1">
-                      <a class="btn btn-link px-3" href="javascript:;">
-                        <i class="fa fa-github text-white text-lg"></i>
-                      </a>
-                    </div>
-                    <div class="col-2 text-center me-auto">
-                      <a class="btn btn-link px-3" href="javascript:;">
-                        <i class="fa fa-google text-white text-lg"></i>
-                      </a>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div class="card-body">
@@ -107,31 +94,46 @@ const submitForm = () => {
                     :value="password"
                     @update:value="password = $event"
                   />
-<!--                  <MaterialSwitch-->
-<!--                    class="d-flex align-items-center mb-3"-->
-<!--                    id="rememberMe"-->
-<!--                    labelClass="mb-0 ms-3"-->
-<!--                    checked-->
-<!--                    >Remember me</MaterialSwitch-->
-<!--                  >-->
+                  <MaterialInput
+                    v-model="pwChk"
+                    class="input-group-outline mb-3"
+                    :label="{ text: '비밀번호를 한번 더 입력해주세요', class: 'form-label' }"
+                    type="password"
+                    :value="pwChk"
+                    @update:value="pwChk = $event"
+                  />
+                  <MaterialInput
+                    v-model="nickName"
+                    class="input-group-outline mb-3"
+                    :label="{ text: '닉네임을 입력해주세요', class: 'form-label' }"
+                    type="text"
+                    :value="nickName"
+                    @update:value="nickName = $event"
+                  />
+                  <div class="container row justify-content-center">
+                    <div class="text-center col-6" id="prevBtn">
+                      <router-link to="/auth/login">
+                      <MaterialButton
+                        class="my-4 mb-2 prevBtn"
+                        variant="outline"
+                        color="warning"
+                        fullWidth
+                        >이전으로</MaterialButton
+                      >
+                      </router-link>
+                    </div>
 
-                  <div class="text-center">
-                    <MaterialButton
-                      class="my-4 mb-2"
-                      variant="gradient"
-                      color="warning"
-                      fullWidth
-                      >login</MaterialButton
-                    >
+                    <div class="text-center col-6">
+                      <MaterialButton
+                        class="my-4 mb-2"
+                        variant="gradient"
+                        color="warning"
+                        fullWidth
+                        >회원가입</MaterialButton
+                      >
+                    </div>
                   </div>
-                  <p class="mt-4 text-sm text-center">
-                    계정이 없으신가요?
-                    <router-link to="/auth/agree">
-                      <p class="text-warning text-gradient font-weight-bold d-inline">
-                        회원 가입
-                      </p>
-                    </router-link>
-                  </p>
+
                 </form>
               </div>
             </div>

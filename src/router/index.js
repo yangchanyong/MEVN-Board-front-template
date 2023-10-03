@@ -4,6 +4,8 @@ import AboutView from "../views/LandingPages/AboutUs/AboutView.vue";
 import ContactView from "../views/LandingPages/ContactUs/ContactView.vue";
 import AuthorView from "../views/LandingPages/Author/AuthorView.vue";
 import SignInBasicView from "../views/LandingPages/SignIn/BasicView.vue";
+import SignUpAgree from "../views/LandingPages/SignUp/Agree.vue";
+import SignUpBasicView from "../views/LandingPages/SignUp/BasicView.vue"
 import PageHeaders from "../layouts/sections/page-sections/page-headers/HeadersView.vue";
 import PageFeatures from "../layouts/sections/page-sections/features/FeaturesView.vue";
 import NavigationNavbars from "../layouts/sections/navigation/navbars/NavbarsView.vue";
@@ -23,6 +25,7 @@ import ElDropdowns from "../layouts/sections/elements/dropdowns/DropdownsView.vu
 import ElProgressBars from "../layouts/sections/elements/progress-bars/ProgressBarsView.vue";
 import ElToggles from "../layouts/sections/elements/toggles/TogglesView.vue";
 import ElTypography from "../layouts/sections/elements/typography/TypographyView.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -47,9 +50,21 @@ const router = createRouter({
       component: AuthorView,
     },
     {
-      path: "/pages/landing-pages/basic",
+      // path: "/pages/landing-pages/basic",
+      path: "/auth/login",
       name: "signin-basic",
       component: SignInBasicView,
+    },
+    {
+      path: "/auth/agree",
+      name: "signup-agree",
+      component: SignUpAgree,
+      meta: {transition: 'slide-left'}
+    },
+    {
+      path: "/auth/signup",
+      name: "signup-basic",
+      component: SignUpBasicView,
     },
     {
       path: "/sections/page-sections/page-headers",
