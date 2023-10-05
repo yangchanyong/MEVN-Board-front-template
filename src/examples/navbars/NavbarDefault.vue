@@ -1,12 +1,13 @@
 <script setup>
 import { RouterLink } from "vue-router";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useWindowsWidth } from "../../assets/js/useWindowsWidth";
 
 // images
 import ArrDark from "@/assets/img/down-arrow-dark.svg";
 import downArrow from "@/assets/img/down-arrow.svg";
 import DownArrWhite from "@/assets/img/down-arrow-white.svg";
+import axios from "axios";
 
 const props = defineProps({
   action: {
@@ -18,6 +19,17 @@ const props = defineProps({
       route: "http://localhost:3000/auth/login",
       color: "bg-gradient-warning",
       label: "Login"
+    })
+  },
+  action2: {
+    type: Object,
+    route: String,
+    color: String,
+    label: String,
+    default: () => ({
+      route: "http://localhost:3000/auth/logout",
+      color: "bg-gradient-warning",
+      label: "Logout"
     })
   },
   transparent: {
@@ -51,6 +63,21 @@ function getArrowColor() {
   } else {
     return ArrDark;
   }
+}
+
+const user = ref();
+
+onMounted(() => {
+  user.value = localStorage.getItem('user')
+})
+
+const logout = () => {
+  axios.post('/api/auth/logout').then(res => {
+    localStorage.removeItem('user')
+    alert('로그아웃 완료')
+  }).catch(err => {
+    console.log('실패!'+err);
+  })
 }
 
 // set text color
@@ -308,7 +335,7 @@ watch(
                   >
                     <a
                       class="dropdown-item py-2 ps-3 border-radius-md"
-                      href="javascript:;"
+                      href="javascript:"
                     >
                       <div class="d-flex">
                         <div
@@ -931,7 +958,7 @@ watch(
           </li>
         </ul>
         <ul class="navbar-nav d-lg-block d-none">
-          <li class="nav-item">
+          <li v-if="user === null" class="nav-item">
             <a
               :href="action.route"
               class="btn btn-sm mb-0"
@@ -939,6 +966,13 @@ watch(
               onclick="smoothToPricing('pricing-soft-ui')"
               >{{ action.label }}</a
             >
+          </li>
+          <li v-else class="nav-item">
+            <a
+              class="btn btn-sm btn-secondary mb-0"
+              @click="logout"
+            >로그아웃
+            </a>
           </li>
         </ul>
       </div>

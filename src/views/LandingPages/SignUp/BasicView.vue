@@ -39,7 +39,8 @@ const submitForm = () => {
   console.log(user);
   axios.post('/api/auth/signup', user)
       .then((response => {
-        router.replace('/auth/signin');
+        alert('회원기입이 완료되었습니다\n로그인 해주세요')
+        router.replace('/auth/login');
       }))
       .catch((err) => {
         alert(err+'\n'+user)

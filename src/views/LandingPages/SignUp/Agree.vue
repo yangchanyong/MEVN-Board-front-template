@@ -25,15 +25,13 @@ import MaterialCheckbox from "@/components/MaterialCheckbox.vue";
 // eslint-disable-next-line no-unused-vars
 let agreeChk = ref(false);
 
-const handleCheckboxChange = (value) => {
-  agreeChk.value = value;
-}
+
 
 const navigateToNextPage = () => {
   if(agreeChk.value) {
-    router.push('/auth/signup');
+    router.replace('/auth/signup');
   }else {
-    alert('약관에 동의하라')
+    alert('약관에 동의해주세요')
   }
 }
 
@@ -88,18 +86,19 @@ const navigateToNextPage = () => {
                   ⑦ 탈퇴(해지) : 서비스 또는 회원이 이용계약을 종료하는 행위
                   ...
                 </p>
-                <div class="float-end">
-                  <MaterialCheckbox
-                      class="mt-3 bg-white"
-                      id="chk"
-                      color="warning"
-                      v-model="agreeChk"
-                      :checked="agreeChk"
-                      @update:value="agreeChk = $event"
+                <div class=" form-check float-end">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="chk"
+                    name="chk"
+                    data-color="success"
+
+                    v-model="agreeChk"
                   >
-                    약관에 동의합니다.
-                  </MaterialCheckbox>
-                  <p v-if="agreeChk">동의 하셨습니다.</p>
+                  <label class="form-check-label" for="chk">약관에 동의합니다</label>
+
+                  <p v-if="agreeChk" style="color: blue">동의 하셨습니다.</p>
                   <p v-else style="color: red">약관에 동의해주세요</p>
                 </div>
                 <div class="container row justify-content-center">
@@ -110,6 +109,7 @@ const navigateToNextPage = () => {
                       variant="outline"
                       color="warning"
                       fullWidth
+                      :checked="agreeChk"
                       >이전으로</MaterialButton
                     >
                     </router-link>
@@ -123,7 +123,7 @@ const navigateToNextPage = () => {
                         color="warning"
                         fullWidth
                         @click="navigateToNextPage"
-                        >다음페이지</MaterialButton
+                        >다음</MaterialButton
                       >
 <!--                    </router-link>-->
                   </div>
