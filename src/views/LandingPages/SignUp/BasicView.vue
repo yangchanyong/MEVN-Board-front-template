@@ -30,17 +30,47 @@ const nickName = ref('');
 
 const pwChk = ref('')
 
-const checkUsername = async () =>{
-  const response = await axios.get('/api/auth/checkId', {headers: this.headers})
-  if(response.data.checkUsername === 1) {
-    alert('중복된 아이디가 존재합니다.')
-    ref.username.focus();
-    return false;
-  }else {
-    alert('사용 가능한 아이디 입니다.')
-    this.$refs.pw.focus();
-  }
+// const checkId = async () =>{
+//   const userChk = { username: username.value}
+//   const response = await axios.post('/api/auth/checkId', userChk);
+//   const checkUsername = response.data();
+//   if(!checkUsername) {
+//     alert('중복된 아이디가 존재합니다.')
+//     this.$ref.username.focus();
+//     return false;
+//   }else {
+//     alert('사용 가능한 아이디 입니다.')
+//     this.$ref.pw.focus();
+//   }
+// }
 
+const checkId = () => {
+  const userChk = {username: username.value};
+  axios.post('/api/auth/checkId', userChk)
+    .then((res) => {
+      if(res.data.checkUsername) {
+        alert('사용 가능한 id 입니다.')
+      }else {
+        alert('사용이 불가능한 id 입니다.')
+      }
+    })
+    .catch(err => {
+      alert(err)
+    })
+}
+const checkNickName = () => {
+  const nickNameChk = {nickName: nickName.value};
+  axios.post('/api/auth/checkNickName', nickNameChk)
+    .then((res) => {
+      if(res.data.checkNickName) {
+        alert('사용 가능한 닉네임 입니다.')
+      }else {
+        alert('사용이 불가능한 닉네임 입니다.')
+      }
+    })
+    .catch(err => {
+      alert(err)
+    })
 }
 
 const submitForm = () => {
@@ -89,7 +119,7 @@ const submitForm = () => {
                     id="contact-form"
                     method="post"
                     autocomplete="off"
-                    v-on:submit.prevent="submitForm"
+                    v-on:submit.prevent="{submitForm}"
                 >
                     <MaterialInput
                       id="username"
@@ -103,8 +133,7 @@ const submitForm = () => {
                         class="my-4 mb-2"
                         variant="outline"
                         color="info"
-                        @click="checkUsername"
-                        v-on:click="checkUsername"
+                        v-on:click="checkId"
                     >중복확인</MaterialButton>
                   <MaterialInput
                     v-model="password"
@@ -132,6 +161,12 @@ const submitForm = () => {
                     :value="nickName"
                     @update:value="nickName = $event"
                   />
+                  <MaterialButton
+                    class="my-4 mb-2"
+                    variant="outline"
+                    color="info"
+                    v-on:click="checkNickName"
+                  >중복확인</MaterialButton>
                   <div class="container row justify-content-center">
                     <div class="text-center col-6" id="prevBtn">
                       <router-link to="/auth/login">
@@ -151,6 +186,7 @@ const submitForm = () => {
                         variant="gradient"
                         color="warning"
                         fullWidth
+                        @click="submitForm"
                         >회원가입</MaterialButton
                       >
                     </div>
