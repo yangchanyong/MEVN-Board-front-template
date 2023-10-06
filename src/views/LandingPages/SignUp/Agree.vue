@@ -92,8 +92,6 @@ const navigateToNextPage = () => {
                     type="checkbox"
                     id="chk"
                     name="chk"
-                    data-color="success"
-
                     v-model="agreeChk"
                   >
                   <label class="form-check-label" for="chk">약관에 동의합니다</label>

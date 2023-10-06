@@ -28,7 +28,20 @@ const password = ref('');
 
 const nickName = ref('');
 
-const pwChk = ref(true)
+const pwChk = ref('')
+
+const checkUsername = async () =>{
+  const response = await axios.get('/api/auth/checkId', {headers: this.headers})
+  if(response.data.checkUsername === 1) {
+    alert('중복된 아이디가 존재합니다.')
+    ref.username.focus();
+    return false;
+  }else {
+    alert('사용 가능한 아이디 입니다.')
+    this.$refs.pw.focus();
+  }
+
+}
 
 const submitForm = () => {
   const user = {
@@ -78,17 +91,24 @@ const submitForm = () => {
                     autocomplete="off"
                     v-on:submit.prevent="submitForm"
                 >
-                  <MaterialInput
-                    id="username"
-                    class="input-group-outline my-3"
-                    :label="{ text: 'ID를 입력해주세요', class: 'form-label' }"
-                    type="text"
-                    :value="username"
-                    @update:value="username = $event"
-                  />
-<!--                  <input id="username" v-model="username" />-->
+                    <MaterialInput
+                      id="username"
+                      class="input-group-outline my-3"
+                      :label="{ text: 'ID를 입력해주세요', class: 'form-label' }"
+                      type="text"
+                      :value="username"
+                      @update:value="username = $event"
+                    />
+                    <MaterialButton
+                        class="my-4 mb-2"
+                        variant="outline"
+                        color="info"
+                        @click="checkUsername"
+                        v-on:click="checkUsername"
+                    >중복확인</MaterialButton>
                   <MaterialInput
                     v-model="password"
+                    id="password"
                     class="input-group-outline mb-3"
                     :label="{ text: '비밀번호를 입력해주세요', class: 'form-label' }"
                     type="password"
@@ -97,6 +117,7 @@ const submitForm = () => {
                   />
                   <MaterialInput
                     v-model="pwChk"
+                    id="pwChk"
                     class="input-group-outline mb-3"
                     :label="{ text: '비밀번호를 한번 더 입력해주세요', class: 'form-label' }"
                     type="password"
