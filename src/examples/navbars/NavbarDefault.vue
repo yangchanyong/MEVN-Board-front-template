@@ -2,6 +2,7 @@
 import { RouterLink } from "vue-router";
 import { onMounted, ref, watch } from "vue";
 import { useWindowsWidth } from "../../assets/js/useWindowsWidth";
+import router from "@/router/index";
 
 // images
 import ArrDark from "@/assets/img/down-arrow-dark.svg";
@@ -65,19 +66,35 @@ function getArrowColor() {
   }
 }
 
-const user = ref();
+const token = ref();
 
 onMounted(() => {
-  user.value = localStorage.getItem('user')
+  token.value = localStorage.getItem('token')
 })
 
+const loginChk = () => {
+  if(token) {
+
+  }
+}
+
+// const logout = () => {
+//   axios.post('/api/auth/logout').then(res => {
+//     localStorage.removeItem('token')
+//     alert('로그아웃 완료')
+//   }).catch(err => {
+//     console.log('실패!'+err);
+//   })
+// }
 const logout = () => {
-  axios.post('/api/auth/logout').then(res => {
-    localStorage.removeItem('user')
+  if(!localStorage.getItem('token')) {
+    console.log('실패!');
+  }else {
+    localStorage.removeItem('token')
+    router.replace('/')
+    token.value = '';
     alert('로그아웃 완료')
-  }).catch(err => {
-    console.log('실패!'+err);
-  })
+  }
 }
 
 // set text color
@@ -958,7 +975,7 @@ watch(
           </li>
         </ul>
         <ul class="navbar-nav d-lg-block d-none">
-          <li v-if="user === null" class="nav-item">
+          <li v-if="!token" class="nav-item">
             <a
               :href="action.route"
               class="btn btn-sm mb-0"

@@ -34,7 +34,7 @@ const submitForm = () => {
   console.log(user);
   axios.post('/api/auth/login', user)
       .then((response => {
-        localStorage.setItem('user', user.username)
+        localStorage.setItem('token', response.data.token)
         router.replace('/');
       }))
       .catch((err) => {

@@ -30,20 +30,6 @@ const nickName = ref('');
 
 const pwChk = ref('')
 
-// const checkId = async () =>{
-//   const userChk = { username: username.value}
-//   const response = await axios.post('/api/auth/checkId', userChk);
-//   const checkUsername = response.data();
-//   if(!checkUsername) {
-//     alert('중복된 아이디가 존재합니다.')
-//     this.$ref.username.focus();
-//     return false;
-//   }else {
-//     alert('사용 가능한 아이디 입니다.')
-//     this.$ref.pw.focus();
-//   }
-// }
-
 const checkId = () => {
   const userChk = {username: username.value};
   axios.post('/api/auth/checkId', userChk)
@@ -121,20 +107,26 @@ const submitForm = () => {
                     autocomplete="off"
                     v-on:submit.prevent="{submitForm}"
                 >
-                    <MaterialInput
-                      id="username"
-                      class="input-group-outline my-3"
-                      :label="{ text: 'ID를 입력해주세요', class: 'form-label' }"
-                      type="text"
-                      :value="username"
-                      @update:value="username = $event"
-                    />
-                    <MaterialButton
-                        class="my-4 mb-2"
-                        variant="outline"
-                        color="info"
-                        v-on:click="checkId"
-                    >중복확인</MaterialButton>
+                  <div class="form-control d-flex">
+                    <div class="col-md-7">
+                      <MaterialInput
+                        id="username"
+                        class="input-group-outline my-3"
+                        :label="{ text: 'ID를 입력해주세요', class: 'form-label' }"
+                        type="text"
+                        :value="username"
+                        @update:value="username = $event"
+                      />
+                    </div>
+                    <div class="col-md-5 ml-2 float-end">
+                      <MaterialButton
+                          class="my-3 mb-2 float-end"
+                          variant="outline"
+                          color="success"
+                          v-on:click="checkId"
+                      >중복확인</MaterialButton>
+                    </div>
+                  </div>
                   <MaterialInput
                     v-model="password"
                     id="password"
@@ -153,20 +145,26 @@ const submitForm = () => {
                     :value="pwChk"
                     @update:value="pwChk = $event"
                   />
-                  <MaterialInput
-                    v-model="nickName"
-                    class="input-group-outline mb-3"
-                    :label="{ text: '닉네임을 입력해주세요', class: 'form-label' }"
-                    type="text"
-                    :value="nickName"
-                    @update:value="nickName = $event"
-                  />
-                  <MaterialButton
-                    class="my-4 mb-2"
-                    variant="outline"
-                    color="info"
-                    v-on:click="checkNickName"
-                  >중복확인</MaterialButton>
+                  <div class="form-control d-flex">
+                    <div class="col-md-7">
+                      <MaterialInput
+                        v-model="nickName"
+                        class="input-group-outline my-3"
+                        :label="{ text: '닉네임을 입력해주세요', class: 'form-label' }"
+                        type="text"
+                        :value="nickName"
+                        @update:value="nickName = $event"
+                      />
+                    </div>
+                    <div class="col-md-5 ml-2 float-end">
+                      <MaterialButton
+                        class="my-3 mb-2 float-end"
+                        variant="outline"
+                        color="info"
+                        v-on:click="checkNickName"
+                      >중복확인</MaterialButton>
+                    </div>
+                  </div>
                   <div class="container row justify-content-center">
                     <div class="text-center col-6" id="prevBtn">
                       <router-link to="/auth/login">
