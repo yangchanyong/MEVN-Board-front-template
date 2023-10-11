@@ -9,6 +9,7 @@ import ArrDark from "@/assets/img/down-arrow-dark.svg";
 import downArrow from "@/assets/img/down-arrow.svg";
 import DownArrWhite from "@/assets/img/down-arrow-white.svg";
 import axios from "axios";
+import MaterialButton from "@/components/MaterialButton.vue";
 
 const props = defineProps({
   action: {
@@ -69,7 +70,8 @@ function getArrowColor() {
 const token = ref();
 
 onMounted(() => {
-  token.value = localStorage.getItem('token')
+  token.value = localStorage.getItem('refreshToken')
+
 })
 
 const loginChk = () => {
@@ -87,12 +89,12 @@ const loginChk = () => {
 //   })
 // }
 const logout = () => {
-  if(!localStorage.getItem('token')) {
+  if(!localStorage.getItem('refreshToken')) {
     console.log('실패!');
   }else {
-    localStorage.removeItem('token')
-    router.replace('/')
     token.value = '';
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
     alert('로그아웃 완료')
   }
 }
@@ -122,6 +124,10 @@ if (type.value === "mobile") {
   textDark.value = false;
 }
 
+const refreshChk = () => {
+  const refreshToken = localStorage.getItem('refreshToken');
+  axios.get('/api/auth/refresh', { headers: { Authorization: refreshToken } })
+}
 watch(
   () => type.value,
   (newValue) => {
@@ -165,6 +171,14 @@ watch(
         data-placement="bottom"
       >
         안녕
+
+        <MaterialButton
+          class="btn btn-sm btn-info mb-0"
+          @click="refreshChk"
+        >
+          123
+        </MaterialButton>
+
       </RouterLink>
       <RouterLink
         class="navbar-brand d-block d-md-none"
