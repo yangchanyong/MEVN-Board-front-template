@@ -10,6 +10,9 @@ import downArrow from "@/assets/img/down-arrow.svg";
 import DownArrWhite from "@/assets/img/down-arrow-white.svg";
 import axios from "axios";
 import MaterialButton from "@/components/MaterialButton.vue";
+import loginStore from "@/loginStore";
+import TokenBtn from "@/components/TokenBtn.vue";
+// import state from "../../loginStore";
 
 const props = defineProps({
   action: {
@@ -124,10 +127,7 @@ if (type.value === "mobile") {
   textDark.value = false;
 }
 
-const refreshChk = () => {
-  const refreshToken = localStorage.getItem('refreshToken');
-  axios.get('/api/auth/refresh', { headers: { Authorization: refreshToken } })
-}
+
 watch(
   () => type.value,
   (newValue) => {
@@ -172,12 +172,7 @@ watch(
       >
         안녕
 
-        <MaterialButton
-          class="btn btn-sm btn-info mb-0"
-          @click="refreshChk"
-        >
-          123
-        </MaterialButton>
+      <TokenBtn />
 
       </RouterLink>
       <RouterLink

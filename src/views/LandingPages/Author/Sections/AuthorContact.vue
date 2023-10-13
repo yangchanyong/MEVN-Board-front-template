@@ -11,7 +11,7 @@ import bgContact from "@/assets/img/examples/blog2.jpg";
 // tooltip
 import setTooltip from "@/assets/js/tooltip";
 
-// store
+// loginStore
 import { useAppStore } from "@/stores";
 const store = useAppStore();
 

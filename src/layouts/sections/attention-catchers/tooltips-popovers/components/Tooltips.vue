@@ -6,7 +6,7 @@ import MaterialButton from "@/components/MaterialButton.vue";
 // popover
 import setTooltip from "@/assets/js/tooltip";
 
-// store
+// loginStore
 import { useAppStore } from "@/stores";
 const store = useAppStore();
 
