@@ -1,4 +1,7 @@
 import Vuex from "vuex";
+// import Vue from 'vue';
+
+// Vue.use(Vuex)
 
 
 const loginStore = new Vuex.Store({
@@ -21,9 +24,10 @@ const loginStore = new Vuex.Store({
   //   }
   // },
   mutations: {
-    setToken(state, response) {
-      state.accessToken = response.data.data.accessToken;
+    setToken(state, data) {
+      state.accessToken = data;
       state.refreshToken = response.data.data.refreshToken;
+      console.log('??', state.accessToken);
     }
   },
   actions: {

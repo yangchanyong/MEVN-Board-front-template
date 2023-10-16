@@ -92,19 +92,25 @@
 <script setup>
 
 import MaterialButton from "@/components/MaterialButton.vue";
-  import MaterialInput from "@/components/MaterialInput.vue";
+import MaterialInput from "@/components/MaterialInput.vue";
+import {mapState} from "vuex";
 </script>
 <script>
 import { computed, ref } from "vue";
 import axios from "axios";
 import router from "@/router";
-import { useStore } from "vuex";
+import {mapState, useStore} from "vuex";
 // import store from "@/loginStore";
 const username = ref("");
 
 
 const password = ref('');
 export default {
+  computed: {
+    // accessToken: this.$store.state.accessToken,
+    // refreshToken: this.$store.state.refreshToken
+    ...mapState(["accessToken"])
+  },
   methods: {
     submitForm() {
       const user = {
@@ -114,14 +120,13 @@ export default {
       console.log(user);
       axios.post('/api/auth/login', user)
         .then((response => {
-          const store = useStore();
-          // console.log(response.data)
-          // const accessToken = computed(() => response.data.data.accessToken);
-          let refreshToken = response.data.data.refreshToken;
-          localStorage.setItem('accessToken', response.data.data.accessToken)
-          localStorage.setItem('refreshToken', response.data.data.refreshToken)
-          // store.commit('setToken', {accessToken, refreshToken})
-          this.$store.commit
+          let store = useStore();
+          const accessToken = response.data.data.accessToken;
+          const refreshToken = response.data.data.refreshToken;
+          localStorage.setItem('accessToken', accessToken)
+          localStorage.setItem('refreshToken', refreshToken)
+          // store.commit('accessToken', accessToken)
+          this.$store.state.commit('accessToken', accessToken)
           router.replace('/');
         }))
         .catch((err) => {
