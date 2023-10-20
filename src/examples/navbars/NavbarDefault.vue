@@ -10,6 +10,7 @@ import downArrow from "@/assets/img/down-arrow.svg";
 import DownArrWhite from "@/assets/img/down-arrow-white.svg";
 import axios from "axios";
 import MaterialButton from "@/components/MaterialButton.vue";
+import VueCookies from "vue-cookies";
 
 const props = defineProps({
   action: {
@@ -70,15 +71,11 @@ function getArrowColor() {
 const token = ref();
 
 onMounted(() => {
-  token.value = localStorage.getItem('refreshToken')
+  // token.value = localStorage.getItem('refreshToken')
+  token.value = VueCookies.get('refresh')
 
 })
 
-const loginChk = () => {
-  if(token) {
-
-  }
-}
 
 // const logout = () => {
 //   axios.post('/api/auth/logout').then(res => {
@@ -93,8 +90,9 @@ const logout = () => {
     console.log('실패!');
   }else {
     token.value = '';
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
+    VueCookies.remove('Authorization')
+    VueCookies.remove('refresh')
+    axios.post('api/auth/logout')
     alert('로그아웃 완료')
   }
 }
@@ -125,8 +123,11 @@ if (type.value === "mobile") {
 }
 
 const refreshChk = () => {
-  const refreshToken = localStorage.getItem('refreshToken');
-  axios.get('/api/auth/refresh', { headers: { Authorization: refreshToken } })
+  // const refreshToken = localStorage.getItem('refreshToken');
+  alert(VueCookies.get('Authorization'))
+  console.log(VueCookies.get('Authorization'));
+
+  // axios.post('/api/auth/refresh', { headers: { Authorization: refreshToken } })
 }
 watch(
   () => type.value,

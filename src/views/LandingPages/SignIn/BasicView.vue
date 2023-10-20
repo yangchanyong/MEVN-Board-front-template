@@ -20,7 +20,7 @@ onMounted(() => {
 });
 
 import router from "@/router/index";
-
+import VueCookies from "vue-cookies";
 // eslint-disable-next-line no-unused-vars
 const username = ref("");
 
@@ -37,6 +37,9 @@ const submitForm = () => {
         // console.log(response.data)
         localStorage.setItem('accessToken', response.data.data.accessToken)
         localStorage.setItem('refreshToken', response.data.data.refreshToken)
+        // VueCookies.set('Authorization', response.data.data.accessToken, '1h')
+        VueCookies.set('Authorization', response.data.data.accessToken, '1h');
+        VueCookies.set('refresh', response.data.data.refreshToken, '14d');
         router.replace('/');
       }))
       .catch((err) => {
