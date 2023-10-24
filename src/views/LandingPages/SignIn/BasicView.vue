@@ -35,10 +35,10 @@ const submitForm = () => {
   axios.post('/api/auth/login', user)
       .then((response => {
         // console.log(response.data)
-        localStorage.setItem('accessToken', response.data.data.accessToken)
-        localStorage.setItem('refreshToken', response.data.data.refreshToken)
+        // localStorage.setItem('accessToken', response.data.data.accessToken)
+        // localStorage.setItem('refreshToken', response.data.data.refreshToken)
         // VueCookies.set('Authorization', response.data.data.accessToken, '1h')
-        VueCookies.set('Authorization', response.data.data.accessToken, '1h');
+        VueCookies.set('Authorization', `Bearer ${response.data.data.accessToken}`, '1h');
         VueCookies.set('refresh', response.data.data.refreshToken, '14d');
         router.replace('/');
       }))

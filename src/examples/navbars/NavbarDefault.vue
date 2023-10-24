@@ -86,15 +86,37 @@ onMounted(() => {
 //   })
 // }
 const logout = () => {
-  if(!localStorage.getItem('refreshToken')) {
-    console.log('실패!');
-  }else {
-    token.value = '';
-    VueCookies.remove('Authorization')
-    VueCookies.remove('refresh')
-    axios.post('api/auth/logout')
-    alert('로그아웃 완료')
-  }
+  const AxiosInst = axios.create({
+    baseURL:'http://localhost:8080'
+  })
+
+  AxiosInst.interceptors.request.use(
+    (config) => {
+      let accessToken = VueCookies.get('Authorization');
+      let refreshToken = VueCookies.get('refresh');
+      console.log(VueCookies.get('Authorization'));
+      if(accessToken) {
+        config.headers.Authorization = accessToken;
+      }else {
+        config.headers.Authorization = accessToken;
+        config.headers.refresh = refreshToken;
+      }
+      return config;
+    }
+  )
+  console.log('로그아웃 호출');
+
+  AxiosInst.post('/api/auth/logout')
+    .then(() => {
+      VueCookies.remove('refresh')
+      VueCookies.remove('Authorization')
+      alert('로그아웃 되었습니다.')
+      token.value = '';
+      router.replace('/')
+    })
+    .catch((error) => {
+      console.log(error);
+    })
 }
 
 // set text color
@@ -124,9 +146,41 @@ if (type.value === "mobile") {
 
 const refreshChk = () => {
   // const refreshToken = localStorage.getItem('refreshToken');
-  alert(VueCookies.get('Authorization'))
-  console.log(VueCookies.get('Authorization'));
+  // alert(VueCookies.get('Authorization'))
+  // console.log(VueCookies.get('Authorization'));
+  const refreshToken = VueCookies.get('refresh');
+  const accessToken = VueCookies.get('Authorization');
+  const AxiosInst = axios.create({
+    baseURL:'http://localhost:8080'
+  })
 
+  AxiosInst.interceptors.request.use(
+    (config) => {
+      let accessToken = VueCookies.get('Authorization');
+      let refreshToken = VueCookies.get('refresh');
+      console.log('accessToken = ', VueCookies.get('Authorization'));
+      console.log('refreshToken = ', VueCookies.get('refresh'));
+      if(accessToken && refreshToken) {
+        config.headers.refresh = refreshToken;
+        config.headers.Authorization = accessToken;
+      }
+      return config;
+    }
+  )
+  console.log('refresh 호출');
+
+  AxiosInst.post('/api/auth/refresh')
+    .then((response) => {
+      console.log('message = ', response.data.message)
+      const newAccessToken = `Bearer ${response.data.newAccessToken}`;
+      if(newAccessToken) {
+        VueCookies.set('Authorization', newAccessToken, '1h');
+      }
+      alert(`${VueCookies.get('refresh')}\n${VueCookies.get('Authorization')}`)
+    })
+    .catch((error) => {
+      alert(`error! = \n${error}`)
+    })
   // axios.post('/api/auth/refresh', { headers: { Authorization: refreshToken } })
 }
 watch(
