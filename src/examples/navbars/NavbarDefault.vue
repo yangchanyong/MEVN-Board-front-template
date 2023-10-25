@@ -68,12 +68,28 @@ function getArrowColor() {
   }
 }
 
-const token = ref();
+let user = ref();
+let isVisible = ref(false);
+
 
 onMounted(() => {
   // token.value = localStorage.getItem('refreshToken')
-  token.value = VueCookies.get('refresh')
-
+  const token = VueCookies.get('Authorization')
+  user.value = token;
+  console.log(user.value);
+  if(token) {
+    const payloadBase64 = token.split('.')[1];
+    console.log(payloadBase64);
+    const payload = atob(payloadBase64);
+    const parse = JSON.parse(payload);
+    console.log('parse = ', parse);
+    if(parse.id !== null) {
+      user.value = parse.nickName;
+      isVisible.value = true;
+    }else {
+      isVisible.value = false;
+    }
+  }
 })
 
 
@@ -95,11 +111,14 @@ const logout = () => {
       let accessToken = VueCookies.get('Authorization');
       let refreshToken = VueCookies.get('refresh');
       console.log(VueCookies.get('Authorization'));
-      if(accessToken) {
-        config.headers.Authorization = accessToken;
-      }else {
+      if(accessToken && refreshToken) {
         config.headers.Authorization = accessToken;
         config.headers.refresh = refreshToken;
+      }else {
+        VueCookies.remove('Authorization');
+        VueCookies.remove('refresh');
+        alert('로그인 필요')
+        router.replace('/auth/login')
       }
       return config;
     }
@@ -111,7 +130,7 @@ const logout = () => {
       VueCookies.remove('refresh')
       VueCookies.remove('Authorization')
       alert('로그아웃 되었습니다.')
-      token.value = '';
+      user.value = null;
       router.replace('/')
     })
     .catch((error) => {
@@ -172,14 +191,16 @@ const refreshChk = () => {
   AxiosInst.post('/api/auth/refresh')
     .then((response) => {
       console.log('message = ', response.data.message)
-      const newAccessToken = `Bearer ${response.data.newAccessToken}`;
+      const newAccessToken = response.data.data.accessToken;
+      console.log('new access token = ', newAccessToken);
       if(newAccessToken) {
-        VueCookies.set('Authorization', newAccessToken, '1h');
+        console.log('newAccessToken 발급');
+        VueCookies.set('Authorization', newAccessToken);
       }
       alert(`${VueCookies.get('refresh')}\n${VueCookies.get('Authorization')}`)
     })
     .catch((error) => {
-      alert(`error! = \n${error}`)
+      console.log(error);
     })
   // axios.post('/api/auth/refresh', { headers: { Authorization: refreshToken } })
 }
@@ -212,29 +233,22 @@ watch(
           ? 'container'
           : 'container-fluid px-0'
       "
+
     >
-      <RouterLink
-        class="navbar-brand d-none d-md-block"
-        :class="[
-          (props.transparent && textDark.value) || !props.transparent
-            ? 'text-dark font-weight-bolder ms-sm-3'
-            : 'text-white font-weight-bolder ms-sm-3'
-        ]"
-        :to="{ name: 'presentation' }"
-        rel="tooltip"
-        title="Designed and Coded by Creative Tim"
-        data-placement="bottom"
+      <p
+        class="text-bold ts-2"
+        v-show="isVisible"
+        style="display: none"
       >
-        안녕
+        {{user}}
 
-        <MaterialButton
-          class="btn btn-sm btn-info mb-0"
-          @click="refreshChk"
-        >
-          123
-        </MaterialButton>
-
-      </RouterLink>
+      </p>
+      <MaterialButton
+        class="btn btn-sm btn-info mb-0"
+        @click="refreshChk"
+      >
+        123
+      </MaterialButton>
       <RouterLink
         class="navbar-brand d-block d-md-none"
         :class="
@@ -1044,7 +1058,7 @@ watch(
           </li>
         </ul>
         <ul class="navbar-nav d-lg-block d-none">
-          <li v-if="!token" class="nav-item">
+          <li v-if="user === null" class="nav-item">
             <a
               :href="action.route"
               class="btn btn-sm mb-0"

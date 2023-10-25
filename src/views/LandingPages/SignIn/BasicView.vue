@@ -38,8 +38,8 @@ const submitForm = () => {
         // localStorage.setItem('accessToken', response.data.data.accessToken)
         // localStorage.setItem('refreshToken', response.data.data.refreshToken)
         // VueCookies.set('Authorization', response.data.data.accessToken, '1h')
-        VueCookies.set('Authorization', `Bearer ${response.data.data.accessToken}`, '1h');
-        VueCookies.set('refresh', response.data.data.refreshToken, '14d');
+        VueCookies.set('Authorization', response.data.data.accessToken);
+        VueCookies.set('refresh', response.data.data.refreshToken);
         router.replace('/');
       }))
       .catch((err) => {
