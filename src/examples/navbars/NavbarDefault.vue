@@ -68,12 +68,28 @@ function getArrowColor() {
   }
 }
 
-const token = ref();
+let user = ref();
+let isVisible = ref(false);
+
 
 onMounted(() => {
   // token.value = localStorage.getItem('refreshToken')
-  token.value = VueCookies.get('refresh')
-
+  const token = VueCookies.get('Authorization')
+  user.value = token;
+  console.log(user.value);
+  if(token) {
+    const payloadBase64 = token.split('.')[1];
+    console.log(payloadBase64);
+    const payload = atob(payloadBase64);
+    const parse = JSON.parse(payload);
+    console.log('parse = ', parse);
+    if(parse.id !== null) {
+      user.value = parse.nickName;
+      isVisible.value = true;
+    }else {
+      isVisible.value = false;
+    }
+  }
 })
 
 
@@ -86,15 +102,40 @@ onMounted(() => {
 //   })
 // }
 const logout = () => {
-  if(!localStorage.getItem('refreshToken')) {
-    console.log('실패!');
-  }else {
-    token.value = '';
-    VueCookies.remove('Authorization')
-    VueCookies.remove('refresh')
-    axios.post('api/auth/logout')
-    alert('로그아웃 완료')
-  }
+  const AxiosInst = axios.create({
+    baseURL:'http://localhost:8080'
+  })
+
+  AxiosInst.interceptors.request.use(
+    (config) => {
+      let accessToken = VueCookies.get('Authorization');
+      let refreshToken = VueCookies.get('refresh');
+      console.log(VueCookies.get('Authorization'));
+      if(accessToken && refreshToken) {
+        config.headers.Authorization = accessToken;
+        config.headers.refresh = refreshToken;
+      }else {
+        VueCookies.remove('Authorization');
+        VueCookies.remove('refresh');
+        alert('로그인 필요')
+        router.replace('/auth/login')
+      }
+      return config;
+    }
+  )
+  console.log('로그아웃 호출');
+
+  AxiosInst.post('/api/auth/logout')
+    .then(() => {
+      VueCookies.remove('refresh')
+      VueCookies.remove('Authorization')
+      alert('로그아웃 되었습니다.')
+      user.value = null;
+      router.replace('/')
+    })
+    .catch((error) => {
+      console.log(error);
+    })
 }
 
 // set text color
@@ -124,10 +165,84 @@ if (type.value === "mobile") {
 
 const refreshChk = () => {
   // const refreshToken = localStorage.getItem('refreshToken');
-  alert(VueCookies.get('Authorization'))
-  console.log(VueCookies.get('Authorization'));
+  // alert(VueCookies.get('Authorization'))
+  // console.log(VueCookies.get('Authorization'));
+  const refreshToken = VueCookies.get('refresh');
+  const accessToken = VueCookies.get('Authorization');
+  const AxiosInst = axios.create({
+    baseURL:'http://localhost:8080'
+  })
 
+  AxiosInst.interceptors.request.use(
+    (config) => {
+      let accessToken = VueCookies.get('Authorization');
+      let refreshToken = VueCookies.get('refresh');
+      console.log('accessToken = ', VueCookies.get('Authorization'));
+      console.log('refreshToken = ', VueCookies.get('refresh'));
+      if(accessToken && refreshToken) {
+        config.headers.refresh = refreshToken;
+        config.headers.Authorization = accessToken;
+      }
+      return config;
+    }
+  )
+  console.log('refresh 호출');
+
+  AxiosInst.get('/api/auth/refresh')
+    .then((response) => {
+      console.log('message = ', response.data.message)
+      const newAccessToken = response.data.data.accessToken;
+      console.log('new access token = ', newAccessToken);
+      if(newAccessToken) {
+        console.log('newAccessToken 발급');
+        VueCookies.set('Authorization', newAccessToken);
+      }
+      alert(`${VueCookies.get('refresh')}\n${VueCookies.get('Authorization')}`)
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   // axios.post('/api/auth/refresh', { headers: { Authorization: refreshToken } })
+}
+const profileChk = () => {
+  const accessToken = VueCookies.get('Authorization');
+  const AxiosInst = axios.create({
+    baseURL:'http://localhost:8080'
+  })
+
+  AxiosInst.interceptors.request.use(
+    (config) => {
+      let accessToken = VueCookies.get('Authorization');
+      let refreshToken = VueCookies.get('refresh');
+      console.log('accessToken = ', VueCookies.get('Authorization'));
+      if(accessToken && refreshToken) {
+        config.headers.Authorization = accessToken;
+        config.headers.refresh = refreshToken;
+      }
+      return config;
+    }
+  )
+  console.log('refresh 호출');
+
+  AxiosInst.get('/api/auth/profile')
+    .then((response) => {
+      const memberProfile = response.data.member;
+
+      if(memberProfile) {
+        alert(memberProfile)
+        console.log(memberProfile);
+      }else {
+        alert('1234')
+      }
+    })
+    .catch((error) => {
+      // alert(error.message)
+      if(error.response.data.message === 'jwt expired') {
+        alert('로그인이 필요합니다!')
+        refreshChk();
+      }
+      console.log(error.response.data.message);
+    })
 }
 watch(
   () => type.value,
@@ -158,29 +273,29 @@ watch(
           ? 'container'
           : 'container-fluid px-0'
       "
+
     >
-      <RouterLink
-        class="navbar-brand d-none d-md-block"
-        :class="[
-          (props.transparent && textDark.value) || !props.transparent
-            ? 'text-dark font-weight-bolder ms-sm-3'
-            : 'text-white font-weight-bolder ms-sm-3'
-        ]"
-        :to="{ name: 'presentation' }"
-        rel="tooltip"
-        title="Designed and Coded by Creative Tim"
-        data-placement="bottom"
+      <p
+        class="text-bold ts-2"
+        v-show="isVisible"
+        style="display: none"
       >
-        안녕
+        {{user}}
 
-        <MaterialButton
-          class="btn btn-sm btn-info mb-0"
-          @click="refreshChk"
-        >
-          123
-        </MaterialButton>
+      </p>
+      <MaterialButton
+        class="btn btn-sm btn-info mb-0"
+        @click="refreshChk"
+      >
+        123
+      </MaterialButton>
 
-      </RouterLink>
+      <MaterialButton
+        class="btn btn-sm btn-info mb-0"
+        @click="profileChk"
+      >
+        456
+      </MaterialButton>
       <RouterLink
         class="navbar-brand d-block d-md-none"
         :class="
@@ -990,7 +1105,7 @@ watch(
           </li>
         </ul>
         <ul class="navbar-nav d-lg-block d-none">
-          <li v-if="!token" class="nav-item">
+          <li v-if="user === null" class="nav-item">
             <a
               :href="action.route"
               class="btn btn-sm mb-0"

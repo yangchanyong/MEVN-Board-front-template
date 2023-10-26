@@ -6,7 +6,6 @@ import VueCookies from 'vue-cookies'
 // Nucleo Icons
 import "./assets/css/nucleo-icons.css";
 import "./assets/css/nucleo-svg.css";
-
 import materialKit from "./material-kit";
 import axios from "axios";
 axios.defaults.withCredentials = true;

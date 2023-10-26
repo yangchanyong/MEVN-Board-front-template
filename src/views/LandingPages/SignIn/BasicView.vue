@@ -35,11 +35,11 @@ const submitForm = () => {
   axios.post('/api/auth/login', user)
       .then((response => {
         // console.log(response.data)
-        localStorage.setItem('accessToken', response.data.data.accessToken)
-        localStorage.setItem('refreshToken', response.data.data.refreshToken)
+        // localStorage.setItem('accessToken', response.data.data.accessToken)
+        // localStorage.setItem('refreshToken', response.data.data.refreshToken)
         // VueCookies.set('Authorization', response.data.data.accessToken, '1h')
-        VueCookies.set('Authorization', response.data.data.accessToken, '1h');
-        VueCookies.set('refresh', response.data.data.refreshToken, '14d');
+        VueCookies.set('Authorization', response.data.data.accessToken);
+        VueCookies.set('refresh', response.data.data.refreshToken);
         router.replace('/');
       }))
       .catch((err) => {
@@ -131,7 +131,9 @@ const submitForm = () => {
                   </div>
                   <p class="mt-4 text-sm text-center">
                     계정이 없으신가요?
-                    <router-link to="/auth/agree">
+                    <router-link
+                      :to="{name:'signup-agree'}"
+                    >
                       <p class="text-warning text-gradient font-weight-bold d-inline">
                         회원 가입
                       </p>
