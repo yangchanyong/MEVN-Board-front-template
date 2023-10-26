@@ -188,7 +188,7 @@ const refreshChk = () => {
   )
   console.log('refresh 호출');
 
-  AxiosInst.post('/api/auth/refresh')
+  AxiosInst.get('/api/auth/refresh')
     .then((response) => {
       console.log('message = ', response.data.message)
       const newAccessToken = response.data.data.accessToken;
@@ -203,6 +203,46 @@ const refreshChk = () => {
       console.log(error);
     })
   // axios.post('/api/auth/refresh', { headers: { Authorization: refreshToken } })
+}
+const profileChk = () => {
+  const accessToken = VueCookies.get('Authorization');
+  const AxiosInst = axios.create({
+    baseURL:'http://localhost:8080'
+  })
+
+  AxiosInst.interceptors.request.use(
+    (config) => {
+      let accessToken = VueCookies.get('Authorization');
+      let refreshToken = VueCookies.get('refresh');
+      console.log('accessToken = ', VueCookies.get('Authorization'));
+      if(accessToken && refreshToken) {
+        config.headers.Authorization = accessToken;
+        config.headers.refresh = refreshToken;
+      }
+      return config;
+    }
+  )
+  console.log('refresh 호출');
+
+  AxiosInst.get('/api/auth/profile')
+    .then((response) => {
+      const memberProfile = response.data.member;
+
+      if(memberProfile) {
+        alert(memberProfile)
+        console.log(memberProfile);
+      }else {
+        alert('1234')
+      }
+    })
+    .catch((error) => {
+      // alert(error.message)
+      if(error.response.data.message === 'jwt expired') {
+        alert('로그인이 필요합니다!')
+        refreshChk();
+      }
+      console.log(error.response.data.message);
+    })
 }
 watch(
   () => type.value,
@@ -248,6 +288,13 @@ watch(
         @click="refreshChk"
       >
         123
+      </MaterialButton>
+
+      <MaterialButton
+        class="btn btn-sm btn-info mb-0"
+        @click="profileChk"
+      >
+        456
       </MaterialButton>
       <RouterLink
         class="navbar-brand d-block d-md-none"

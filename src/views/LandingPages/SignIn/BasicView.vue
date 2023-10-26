@@ -131,7 +131,9 @@ const submitForm = () => {
                   </div>
                   <p class="mt-4 text-sm text-center">
                     계정이 없으신가요?
-                    <router-link to="/auth/agree">
+                    <router-link
+                      :to="{name:'signup-agree'}"
+                    >
                       <p class="text-warning text-gradient font-weight-bold d-inline">
                         회원 가입
                       </p>
