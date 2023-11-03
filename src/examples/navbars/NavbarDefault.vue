@@ -70,6 +70,7 @@ function getArrowColor() {
 
 let user = ref();
 let isVisible = ref(false);
+let nickName = ref()
 
 
 onMounted(() => {
@@ -77,30 +78,23 @@ onMounted(() => {
   const token = VueCookies.get('Authorization')
   user.value = token;
   console.log(user.value);
-  if(token) {
-    const payloadBase64 = token.split('.')[1];
-    console.log(payloadBase64);
-    const payload = atob(payloadBase64);
-    const parse = JSON.parse(payload);
-    console.log('parse = ', parse);
-    if(parse.id !== null) {
-      user.value = parse.nickName;
-      isVisible.value = true;
-    }else {
-      isVisible.value = false;
-    }
-  }
+  // if(token) {
+  //   const payloadBase64 = token.split('.')[1];
+  //   console.log(payloadBase64);
+  //   const payload = atob(payloadBase64);
+  //   const parse = JSON.parse(payload);
+  //   console.log('parse = ', parse);
+  //   if(parse.id !== null) {
+  //     // nickName.value = parse.nickName;
+  //     nickName.value = parse
+  //     isVisible.value = true;
+  //   }else {
+  //     isVisible.value = false;
+  //   }
+  // }
 })
 
 
-// const logout = () => {
-//   axios.post('/api/auth/logout').then(res => {
-//     localStorage.removeItem('token')
-//     alert('로그아웃 완료')
-//   }).catch(err => {
-//     console.log('실패!'+err);
-//   })
-// }
 const logout = () => {
   const AxiosInst = axios.create({
     baseURL:'http://localhost:8080'
@@ -200,12 +194,15 @@ const refreshChk = () => {
       alert(`${VueCookies.get('refresh')}\n${VueCookies.get('Authorization')}`)
     })
     .catch((error) => {
+      alert(error.response.data.message)
+
       console.log(error);
     })
   // axios.post('/api/auth/refresh', { headers: { Authorization: refreshToken } })
 }
 const profileChk = () => {
   const accessToken = VueCookies.get('Authorization');
+  const refreshToken = VueCookies.get('refresh')
   const AxiosInst = axios.create({
     baseURL:'http://localhost:8080'
   })
@@ -224,7 +221,7 @@ const profileChk = () => {
   )
   console.log('refresh 호출');
 
-  AxiosInst.get('/api/auth/profile')
+  AxiosInst.get('/api/auth/profile', {headers:{Authorization : accessToken, refresh : refreshToken}})
     .then((response) => {
       const memberProfile = response.data.member;
 
@@ -280,21 +277,20 @@ watch(
         v-show="isVisible"
         style="display: none"
       >
-        {{user}}
-
+        {{nickName}}
       </p>
       <MaterialButton
         class="btn btn-sm btn-info mb-0"
         @click="refreshChk"
       >
-        123
+        refresh
       </MaterialButton>
 
       <MaterialButton
         class="btn btn-sm btn-info mb-0"
         @click="profileChk"
       >
-        456
+        profile
       </MaterialButton>
       <RouterLink
         class="navbar-brand d-block d-md-none"
@@ -930,160 +926,6 @@ watch(
           </li>
           <li class="nav-item dropdown dropdown-hover mx-2">
             <a
-              role="button"
-              class="nav-link ps-2 d-flex cursor-pointer align-items-center"
-              :class="getTextColor()"
-              id="dropdownMenuDocs"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <i
-                class="material-icons opacity-6 me-2 text-md"
-                :class="getTextColor()"
-                >article</i
-              >
-              Docs
-              <img
-                :src="getArrowColor()"
-                alt="down-arrow"
-                class="arrow ms-2 d-lg-block d-none"
-              />
-              <img
-                :src="getArrowColor()"
-                alt="down-arrow"
-                class="arrow ms-1 d-lg-none d-block ms-auto"
-              />
-            </a>
-            <div
-              class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md mt-0 mt-lg-3 p-3 border-radius-lg"
-              aria-labelledby="dropdownMenuDocs"
-            >
-              <div class="d-none d-lg-block">
-                <ul class="list-group">
-                  <li class="nav-item list-group-item border-0 p-0">
-                    <a
-                      class="dropdown-item py-2 ps-3 border-radius-md"
-                      href=" https://www.creative-tim.com/learning-lab/vue/overview/material-kit/"
-                    >
-                      <h6
-                        class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
-                      >
-                        Getting Started
-                      </h6>
-                      <span class="text-sm"
-                        >All about overview, quick start, license and
-                        contents</span
-                      >
-                    </a>
-                  </li>
-                  <li class="nav-item list-group-item border-0 p-0">
-                    <a
-                      class="dropdown-item py-2 ps-3 border-radius-md"
-                      href=" https://www.creative-tim.com/learning-lab/vue/colors/material-kit/"
-                    >
-                      <h6
-                        class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
-                      >
-                        Foundation
-                      </h6>
-                      <span class="text-sm"
-                        >See our colors, icons and typography</span
-                      >
-                    </a>
-                  </li>
-                  <li class="nav-item list-group-item border-0 p-0">
-                    <a
-                      class="dropdown-item py-2 ps-3 border-radius-md"
-                      href=" https://www.creative-tim.com/learning-lab/vue/alerts/material-kit/"
-                    >
-                      <h6
-                        class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
-                      >
-                        Components
-                      </h6>
-                      <span class="text-sm"
-                        >Explore our collection of fully designed
-                        components</span
-                      >
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div class="row d-lg-none">
-                <div class="col-md-12 g-0">
-                  <a
-                    class="dropdown-item py-2 ps-3 border-radius-md"
-                    href="./pages/about-us.html"
-                  >
-                    <h6
-                      class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
-                    >
-                      Getting Started
-                    </h6>
-                    <span class="text-sm"
-                      >All about overview, quick start, license and
-                      contents</span
-                    >
-                  </a>
-                  <a
-                    class="dropdown-item py-2 ps-3 border-radius-md"
-                    href="./pages/about-us.html"
-                  >
-                    <h6
-                      class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
-                    >
-                      Foundation
-                    </h6>
-                    <span class="text-sm"
-                      >See our colors, icons and typography</span
-                    >
-                  </a>
-                  <a
-                    class="dropdown-item py-2 ps-3 border-radius-md"
-                    href="./pages/about-us.html"
-                  >
-                    <h6
-                      class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
-                    >
-                      Components
-                    </h6>
-                    <span class="text-sm"
-                      >Explore our collection of fully designed components</span
-                    >
-                  </a>
-                  <a
-                    class="dropdown-item py-2 ps-3 border-radius-md"
-                    href="./pages/about-us.html"
-                  >
-                    <h6
-                      class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
-                    >
-                      Plugins
-                    </h6>
-                    <span class="text-sm"
-                      >Check how you can integrate our plugins</span
-                    >
-                  </a>
-                  <a
-                    class="dropdown-item py-2 ps-3 border-radius-md"
-                    href="./pages/about-us.html"
-                  >
-                    <h6
-                      class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
-                    >
-                      Utility Classes
-                    </h6>
-                    <span class="text-sm"
-                      >For those who want flexibility, use our utility
-                      classes</span
-                    >
-                  </a>
-                </div>
-              </div>
-            </div>
-          </li>
-          <li class="nav-item dropdown dropdown-hover mx-2">
-            <a
               href="https://www.github.com/creativetimofficial/vue-material-kit"
               class="nav-link d-flex cursor-pointer align-items-center"
             >
@@ -1114,12 +956,75 @@ watch(
               >{{ action.label }}</a
             >
           </li>
-          <li v-else class="nav-item">
+          <li v-else class="nav-item dropdown dropdown-hover mx-2">
             <a
-              class="btn btn-sm btn-secondary mb-0"
-              @click="logout"
-            >로그아웃
+              role="button"
+              class="nav-link ps-2 d-flex cursor-pointer align-items-center"
+              :class="getTextColor()"
+              id="dropdownMenuDocs"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i
+                class="material-icons opacity-6 me-2 text-md"
+                :class="getTextColor()"
+              >account_circle</i
+              >
+              <img
+                :src="getArrowColor()"
+                alt="down-arrow"
+                class="arrow ms-2 d-lg-block d-none"
+              />
+              <img
+                :src="getArrowColor()"
+                alt="down-arrow"
+                class="arrow ms-1 d-lg-none d-block ms-auto"
+              />
             </a>
+            <div
+              class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md mt-0 mt-lg-3 p-3 border-radius-lg"
+              aria-labelledby="dropdownMenuDocs"
+            >
+              <div class="d-none d-lg-block">
+                <ul class="list-group">
+                  <li class="nav-item list-group-item border-0 p-0">
+                    <a
+                      class="dropdown-item py-2 ps-3 border-radius-md"
+                      @click="logout"
+                    >
+                      <h6
+                        class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
+                      >
+                        logout
+                      </h6>
+                    </a>
+                  </li>
+                  <li class="nav-item list-group-item border-0 p-0">
+                    <router-link
+                      to="/auth/info"
+                      class="dropdown-item py-2 ps-3 border-radius-md"
+                    >
+                      <h6
+                        class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
+                      >
+                        회원정보 수정
+                      </h6>
+                    </router-link>
+                  </li>
+                  <li class="nav-item list-group-item border-0 p-0">
+                    <a
+                      class="dropdown-item py-2 ps-3 border-radius-md"
+                    >
+                      <h6
+                        class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0"
+                      >
+                        임시
+                      </h6>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </li>
         </ul>
       </div>
